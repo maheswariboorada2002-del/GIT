@@ -1,0 +1,50 @@
+body{
+    background-color: black;
+}
+.container{
+    width:100%;
+    height:auto;
+    background-color: aqua;
+    padding:10px;
+    margin:auto;
+}
+h2{
+    font-family: cursive;
+}
+p{
+    font-family: sans-serif;
+    
+}
+a{
+    text-decoration:underline;
+    color:black;
+}
+a:hover{
+    color:red;
+    
+}
+.favorite{
+    text-align:center;
+    margin-top: 40px;
+    justify-content: center;
+    color:white;
+    margin-right: 70px;
+}
+.option{
+    display:block;
+    margin:15px;
+    margin-right:150px;
+    font-size: larger;
+}
+h6{
+    color:white;
+    text-align:center;
+    font-size: larger;
+}
+footer{
+    justify-content: center;
+    margin-top: 40px;
+    margin-right: 50px;
+    color:white;
+    text-align: center;
+}
