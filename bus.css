@@ -15,7 +15,43 @@ body{
     color:white;
     position: relative;
 }
+.hero-buttons{
+    display:flex;
+    gap:20px;
+    justify-content:center;
+    margin-top:20px;
+}
 
+.start-btn{
+    padding:14px 28px;
+    background:aqua;
+    color:black;
+    text-decoration:none;
+    font-weight:bold;
+    border-radius:8px;
+    transition:0.3s;
+}
+
+.start-btn:hover{
+    background:#00cfcf;
+    transform:translateY(-3px);
+}
+
+.explore-btn{
+    padding:14px 28px;
+    border:2px solid aqua;
+    color:white;
+    text-decoration:none;
+    font-weight:bold;
+    border-radius:8px;
+    transition:0.3s;
+}
+
+.explore-btn:hover{
+    background:aqua;
+    color:black;
+    transform:translateY(-3px);
+}
 
 .navbar{
     display: flex;
