@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>jQuery Attributes</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    :root { --bg:#0a0a0f; --surface:#13131a; --border:#1e1e2e; --accent:#40c0f0; --text:#e0e0f0; --muted:#6060a0; }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;}
+    body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(64,192,240,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(64,192,240,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+    nav{display:flex;align-items:center;gap:16px;padding:20px 32px;border-bottom:1px solid var(--border);position:relative;z-index:10;}
+    nav a{font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--muted);text-decoration:none;}
+    nav a:hover{color:var(--accent);}
+    .page-title{font-size:0.7rem;letter-spacing:0.15em;color:var(--accent);font-family:'JetBrains Mono',monospace;}
+    main{max-width:900px;margin:0 auto;padding:40px 24px 80px;position:relative;z-index:1;}
+    h1{font-size:2.5rem;font-weight:800;margin-bottom:8px;}
+    h1 span{color:var(--accent);}
+    .desc{color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:0.85rem;margin-bottom:48px;}
+    .section{margin-bottom:48px;}
+    .section-title{font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--accent);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:12px;}
+    .section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+    .demo-box{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:24px;margin-bottom:16px;}
+    .controls{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px;}
+    button{background:rgba(64,192,240,0.1);border:1px solid var(--accent);color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:0.75rem;padding:8px 16px;border-radius:4px;cursor:pointer;transition:all 0.2s;}
+    button:hover{background:var(--accent);color:#000;}
+    button.yellow{border-color:#f0c040;color:#f0c040;background:rgba(240,192,64,0.1);}
+    button.yellow:hover{background:#f0c040;color:#000;}
+    button.red{border-color:#f04080;color:#f04080;background:rgba(240,64,128,0.1);}
+    button.red:hover{background:#f04080;color:#fff;}
+    button.green{border-color:#40f0a0;color:#40f0a0;background:rgba(64,240,160,0.1);}
+    button.green:hover{background:#40f0a0;color:#000;}
+    .output{background:#000;border:1px solid var(--border);border-radius:4px;padding:12px;font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:#40f0a0;min-height:40px;margin-top:12px;}
+    input[type=text],input[type=email]{background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:0.85rem;padding:10px 14px;border-radius:4px;outline:none;width:100%;max-width:360px;transition:border-color 0.2s;}
+    input[type=text]:focus,input[type=email]:focus{border-color:var(--accent);}
+    .img-wrap{display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+    #demo-img{width:200px;height:120px;object-fit:cover;border-radius:6px;border:2px solid var(--border);transition:all 0.3s;background:#111;}
+    label{font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--muted);}
+    .checkbox-row{display:flex;align-items:center;gap:12px;margin:8px 0;}
+    input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);}
+    .attr-badge{display:inline-block;background:rgba(64,192,240,0.15);border:1px solid var(--accent);color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:0.7rem;padding:2px 8px;border-radius:3px;margin:2px;}
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html">← Home</a>
+    <div style="flex:1"></div>
+    <span class="page-title">02 // ATTRIBUTES</span>
+  </nav>
+  <main>
+    <h1>Attribute <span>Methods</span></h1>
+    <p class="desc">// attr() · removeAttr() · prop() · val()</p>
+
+    <!-- attr() -->
+    <div class="section">
+      <div class="section-title">attr() — Get &amp; Set Attributes</div>
+      <div class="demo-box">
+        <div class="img-wrap">
+          <img id="demo-img"
+            src="https://picsum.photos/seed/alpha/400/240"
+            alt="Demo Image"
+            title="Original Image"/>
+          <div>
+            <div class="controls">
+              <button id="get-src">Get src</button>
+              <button id="get-alt" class="yellow">Get alt</button>
+              <button id="get-title" class="red">Get title</button>
+            </div>
+            <div class="controls">
+              <button id="set-img1" class="green">Change Image 1</button>
+              <button id="set-img2">Change Image 2</button>
+              <button id="set-alt" class="yellow">Set alt</button>
+              <button id="set-title" class="red">Set title</button>
+            </div>
+          </div>
+        </div>
+        <div id="attr-output" class="output">// attr() demo — click a button</div>
+      </div>
+    </div>
+
+    <!-- removeAttr() -->
+    <div class="section">
+      <div class="section-title">removeAttr() — Remove Attributes</div>
+      <div class="demo-box">
+        <p style="font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--muted);margin-bottom:16px;">Current attributes on input:</p>
+        <div id="attr-badges">
+          <span class="attr-badge">placeholder="Enter email"</span>
+          <span class="attr-badge">title="Email field"</span>
+          <span class="attr-badge">maxlength="50"</span>
+        </div>
+        <br/>
+        <input type="email" id="email-input" placeholder="Enter email" title="Email field" maxlength="50"/>
+        <div class="controls" style="margin-top:16px;">
+          <button id="rm-placeholder" class="red">removeAttr("placeholder")</button>
+          <button id="rm-title" class="yellow">removeAttr("title")</button>
+          <button id="rm-maxlen">removeAttr("maxlength")</button>
+          <button id="restore-attrs" class="green">Restore All</button>
+        </div>
+        <div id="rm-output" class="output">// removeAttr() demo</div>
+      </div>
+    </div>
+
+    <!-- prop() -->
+    <div class="section">
+      <div class="section-title">prop() — Properties (checked, disabled, etc.)</div>
+      <div class="demo-box">
+        <div class="checkbox-row">
+          <input type="checkbox" id="cb1"/> <label for="cb1">Checkbox 1</label>
+          <input type="checkbox" id="cb2" checked/> <label for="cb2">Checkbox 2 (checked)</label>
+          <input type="checkbox" id="cb3" disabled/> <label for="cb3">Checkbox 3 (disabled)</label>
+        </div>
+        <div class="controls" style="margin-top:16px;">
+          <button id="check-all" class="green">prop("checked", true) — Check All</button>
+          <button id="uncheck-all" class="red">prop("checked", false) — Uncheck All</button>
+          <button id="disable-all" class="yellow">prop("disabled", true) — Disable All</button>
+          <button id="enable-all">prop("disabled", false) — Enable All</button>
+          <button id="get-props">Get Properties</button>
+        </div>
+        <div id="prop-output" class="output">// prop() demo</div>
+      </div>
+    </div>
+
+    <!-- val() -->
+    <div class="section">
+      <div class="section-title">val() — Get &amp; Set Input Values</div>
+      <div class="demo-box">
+        <div style="display:flex;flex-direction:column;gap:12px;max-width:400px;">
+          <input type="text" id="name-input" placeholder="Type your name..." value=""/>
+          <select id="color-select" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:0.85rem;padding:10px 14px;border-radius:4px;outline:none;">
+            <option value="red">Red</option>
+            <option value="green">Green</option>
+            <option value="blue">Blue</option>
+            <option value="yellow">Yellow</option>
+          </select>
+        </div>
+        <div class="controls" style="margin-top:16px;">
+          <button id="get-name">val() — Get Name</button>
+          <button id="set-name" class="yellow">val("jQuery") — Set Name</button>
+          <button id="get-color" class="red">val() — Get Select</button>
+          <button id="set-color" class="green">val("green") — Set Select</button>
+          <button id="clear-all">Clear All</button>
+        </div>
+        <div id="val-output" class="output">// val() demo</div>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script>
+  $(function(){
+    // --- attr() ---
+    $("#get-src").click(function(){ $("#attr-output").text('attr("src") = "' + $("#demo-img").attr("src") + '"'); });
+    $("#get-alt").click(function(){ $("#attr-output").text('attr("alt") = "' + $("#demo-img").attr("alt") + '"'); });
+    $("#get-title").click(function(){ $("#attr-output").text('attr("title") = "' + $("#demo-img").attr("title") + '"'); });
+    $("#set-img1").click(function(){ $("#demo-img").attr("src","https://picsum.photos/seed/beta/400/240"); $("#attr-output").text('attr("src", "...beta...") — Image source changed!'); });
+    $("#set-img2").click(function(){ $("#demo-img").attr("src","https://picsum.photos/seed/gamma/400/240"); $("#attr-output").text('attr("src", "...gamma...") — Image source changed!'); });
+    $("#set-alt").click(function(){ $("#demo-img").attr("alt","Updated Alt Text"); $("#attr-output").text('attr("alt", "Updated Alt Text") — alt attribute set!'); });
+    $("#set-title").click(function(){ $("#demo-img").attr("title","New Title via jQuery"); $("#attr-output").text('attr("title", "New Title via jQuery") — title set!'); });
+
+    // --- removeAttr() ---
+    function updateBadges(){
+      var inp = $("#email-input");
+      var badges = "";
+      if(inp.attr("placeholder")) badges += '<span class="attr-badge">placeholder="'+inp.attr("placeholder")+'"</span>';
+      if(inp.attr("title")) badges += '<span class="attr-badge">title="'+inp.attr("title")+'"</span>';
+      if(inp.attr("maxlength")) badges += '<span class="attr-badge">maxlength="'+inp.attr("maxlength")+'"</span>';
+      if(!badges) badges = '<span style="font-family:JetBrains Mono,monospace;font-size:0.78rem;color:#f04080">No attributes remaining</span>';
+      $("#attr-badges").html(badges);
+    }
+    $("#rm-placeholder").click(function(){ $("#email-input").removeAttr("placeholder"); updateBadges(); $("#rm-output").text('removeAttr("placeholder") — placeholder removed!'); });
+    $("#rm-title").click(function(){ $("#email-input").removeAttr("title"); updateBadges(); $("#rm-output").text('removeAttr("title") — title removed!'); });
+    $("#rm-maxlen").click(function(){ $("#email-input").removeAttr("maxlength"); updateBadges(); $("#rm-output").text('removeAttr("maxlength") — maxlength removed!'); });
+    $("#restore-attrs").click(function(){ $("#email-input").attr({placeholder:"Enter email",title:"Email field",maxlength:"50"}); updateBadges(); $("#rm-output").text("All attributes restored!"); });
+
+    // --- prop() ---
+    $("#check-all").click(function(){ $("input[type=checkbox]").prop("checked",true); $("#prop-output").text('prop("checked", true) — All checkboxes checked!'); });
+    $("#uncheck-all").click(function(){ $("input[type=checkbox]").prop("checked",false); $("#prop-output").text('prop("checked", false) — All checkboxes unchecked!'); });
+    $("#disable-all").click(function(){ $("input[type=checkbox]").prop("disabled",true); $("#prop-output").text('prop("disabled", true) — All checkboxes disabled!'); });
+    $("#enable-all").click(function(){ $("input[type=checkbox]").prop("disabled",false); $("#prop-output").text('prop("disabled", false) — All checkboxes enabled!'); });
+    $("#get-props").click(function(){
+      var info = [];
+      $("input[type=checkbox]").each(function(i){
+        info.push("cb"+(i+1)+": checked="+$(this).prop("checked")+", disabled="+$(this).prop("disabled"));
+      });
+      $("#prop-output").text(info.join(" | "));
+    });
+
+    // --- val() ---
+    $("#get-name").click(function(){ $("#val-output").text('val() = "' + $("#name-input").val() + '"'); });
+    $("#set-name").click(function(){ $("#name-input").val("jQuery"); $("#val-output").text('val("jQuery") — Input value set to "jQuery"'); });
+    $("#get-color").click(function(){ $("#val-output").text('val() = "' + $("#color-select").val() + '"'); });
+    $("#set-color").click(function(){ $("#color-select").val("green"); $("#val-output").text('val("green") — Select changed to "green"'); });
+    $("#clear-all").click(function(){ $("#name-input").val(""); $("#color-select").val("red"); $("#val-output").text("All inputs cleared / reset"); });
+  });
+  </script>
+</body>
+</html>

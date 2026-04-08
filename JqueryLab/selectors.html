@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>jQuery Selectors</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    :root {
+      --bg:#0a0a0f; --surface:#13131a; --border:#1e1e2e;
+      --accent:#f0c040; --text:#e0e0f0; --muted:#6060a0;
+    }
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    body { background:var(--bg); color:var(--text); font-family:'Syne',sans-serif; min-height:100vh; }
+    body::before {
+      content:''; position:fixed; inset:0;
+      background-image: linear-gradient(rgba(240,192,64,0.03) 1px,transparent 1px), linear-gradient(90deg,rgba(240,192,64,0.03) 1px,transparent 1px);
+      background-size:40px 40px; pointer-events:none; z-index:0;
+    }
+    nav { display:flex; align-items:center; gap:16px; padding:20px 32px; border-bottom:1px solid var(--border); position:relative; z-index:10; }
+    nav a { font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:var(--muted); text-decoration:none; }
+    nav a:hover { color:var(--accent); }
+    .page-title { font-size:0.7rem; letter-spacing:0.15em; color:var(--accent); font-family:'JetBrains Mono',monospace; }
+    main { max-width:1000px; margin:0 auto; padding:40px 24px 80px; position:relative; z-index:1; }
+    h1 { font-size:2.5rem; font-weight:800; margin-bottom:8px; }
+    h1 span { color:var(--accent); }
+    .desc { color:var(--muted); font-family:'JetBrains Mono',monospace; font-size:0.85rem; margin-bottom:48px; }
+    .section { margin-bottom:48px; }
+    .section-title {
+      font-family:'JetBrains Mono',monospace; font-size:0.7rem;
+      color:var(--accent); letter-spacing:0.15em;
+      text-transform:uppercase; margin-bottom:20px;
+      display:flex; align-items:center; gap:12px;
+    }
+    .section-title::after { content:''; flex:1; height:1px; background:var(--border); }
+    .demo-box {
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:8px; padding:24px; margin-bottom:16px;
+    }
+    .controls { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px; }
+    button {
+      background:rgba(240,192,64,0.1); border:1px solid var(--accent);
+      color:var(--accent); font-family:'JetBrains Mono',monospace;
+      font-size:0.75rem; padding:8px 16px; border-radius:4px;
+      cursor:pointer; transition:all 0.2s; white-space:nowrap;
+    }
+    button:hover { background:var(--accent); color:#000; }
+    button.blue { border-color:#40c0f0; color:#40c0f0; background:rgba(64,192,240,0.1); }
+    button.blue:hover { background:#40c0f0; color:#000; }
+    button.red { border-color:#f04080; color:#f04080; background:rgba(240,64,128,0.1); }
+    button.red:hover { background:#f04080; color:#fff; }
+    button.green { border-color:#40f0a0; color:#40f0a0; background:rgba(64,240,160,0.1); }
+    button.green:hover { background:#40f0a0; color:#000; }
+    .item-list { list-style:none; display:flex; flex-direction:column; gap:6px; }
+    .item-list li {
+      background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);
+      border-radius:4px; padding:8px 14px;
+      font-family:'JetBrains Mono',monospace; font-size:0.8rem;
+      transition:all 0.3s;
+    }
+    .item-list li.highlighted { background:rgba(240,192,64,0.2); border-color:var(--accent); color:var(--accent); }
+    .item-list li.blue-hl { background:rgba(64,192,240,0.2); border-color:#40c0f0; color:#40c0f0; }
+    .item-list li.red-hl { background:rgba(240,64,128,0.2); border-color:#f04080; color:#f04080; }
+    .item-list li.green-hl { background:rgba(64,240,160,0.2); border-color:#40f0a0; color:#40f0a0; }
+    table { width:100%; border-collapse:collapse; }
+    td, th { font-family:'JetBrains Mono',monospace; font-size:0.78rem; padding:8px 12px; border:1px solid var(--border); }
+    th { background:rgba(240,192,64,0.08); color:var(--accent); text-align:left; }
+    td { color:var(--muted); }
+    td:first-child { color:var(--text); }
+    #output {
+      background:#000; border:1px solid var(--border); border-radius:4px;
+      padding:12px; font-family:'JetBrains Mono',monospace; font-size:0.78rem;
+      color:#40f0a0; min-height:40px; margin-top:12px;
+    }
+    /* Hierarchy demo */
+    .tree { padding:12px; }
+    .tree ul { list-style:none; padding-left:20px; }
+    .tree li { margin:4px 0; font-family:'JetBrains Mono',monospace; font-size:0.8rem; transition:all 0.3s; padding:2px 6px; border-radius:3px; }
+    .tree li.hl { background:rgba(240,192,64,0.2); color:var(--accent); }
+    /* Attr demo */
+    .attr-demo { display:flex; gap:8px; flex-wrap:wrap; }
+    .attr-demo span {
+      background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);
+      border-radius:4px; padding:6px 12px;
+      font-family:'JetBrains Mono',monospace; font-size:0.78rem;
+      transition:all 0.3s;
+    }
+    .attr-demo span.matched { background:rgba(64,192,240,0.2); border-color:#40c0f0; color:#40c0f0; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html">← Home</a>
+    <div style="flex:1"></div>
+    <span class="page-title">01 // SELECTORS</span>
+  </nav>
+  <main>
+    <h1>jQuery <span>Selectors</span></h1>
+    <p class="desc">// Interactive demonstrations of all selector types</p>
+
+    <!-- Basic Selectors -->
+    <div class="section">
+      <div class="section-title">Basic Selectors</div>
+      <div class="demo-box">
+        <div class="controls">
+          <button id="sel-element">$("li")</button>
+          <button id="sel-id" class="blue">$("#item3")</button>
+          <button id="sel-class" class="red">$(".special")</button>
+          <button id="sel-multi" class="green">$("li,p")</button>
+          <button id="sel-reset">Reset</button>
+        </div>
+        <ul class="item-list" id="basic-list">
+          <li>Item 1 — li element</li>
+          <li>Item 2 — li element</li>
+          <li id="item3">Item 3 — #item3</li>
+          <li class="special">Item 4 — .special</li>
+          <li class="special">Item 5 — .special</li>
+          <li>Item 6 — li element</li>
+        </ul>
+        <p id="basic-para" style="margin-top:12px; font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:var(--muted); background:rgba(255,255,255,0.04); padding:8px 14px; border-radius:4px;">This is a &lt;p&gt; element</p>
+        <div id="output">// Click a button to see selector in action</div>
+      </div>
+    </div>
+
+    <!-- Hierarchy Selectors -->
+    <div class="section">
+      <div class="section-title">Hierarchy Selectors</div>
+      <div class="demo-box">
+        <div class="controls">
+          <button id="h-desc">$("div li") — Descendants</button>
+          <button id="h-child" class="blue">$("ul > li") — Direct Child</button>
+          <button id="h-adj" class="red">$("#h2 + li") — Adjacent</button>
+          <button id="h-sib" class="green">$("#h2 ~ li") — General Sibling</button>
+          <button id="h-reset">Reset</button>
+        </div>
+        <div class="tree">
+          <ul id="htree">
+            <li>Outer li 1</li>
+            <li id="h2">Outer li 2 (id="h2")</li>
+            <li>Outer li 3</li>
+            <li>Outer li 4
+              <ul>
+                <li class="nested">Nested li A</li>
+                <li class="nested">Nested li B</li>
+              </ul>
+            </li>
+            <li>Outer li 5</li>
+          </ul>
+        </div>
+        <div id="h-output" class="output" style="background:#000; border:1px solid var(--border); border-radius:4px; padding:12px; font-family:'JetBrains Mono',monospace; font-size:0.78rem; color:#40f0a0; margin-top:12px;">// Hierarchy selectors</div>
+      </div>
+    </div>
+
+    <!-- Filter Selectors -->
+    <div class="section">
+      <div class="section-title">Filter Selectors</div>
+      <div class="demo-box">
+        <div class="controls">
+          <button id="f-first">:first</button>
+          <button id="f-last" class="blue">:last</button>
+          <button id="f-eq" class="red">:eq(2)</button>
+          <button id="f-even" class="green">:even</button>
+          <button id="f-odd">:odd</button>
+          <button id="f-not" class="blue">:not(.skip)</button>
+          <button id="f-reset">Reset</button>
+        </div>
+        <ul class="item-list" id="filter-list">
+          <li>Filter Item 0</li>
+          <li>Filter Item 1</li>
+          <li>Filter Item 2</li>
+          <li class="skip">Filter Item 3 (skip)</li>
+          <li>Filter Item 4</li>
+          <li class="skip">Filter Item 5 (skip)</li>
+          <li>Filter Item 6</li>
+        </ul>
+        <div id="f-output" style="background:#000; border:1px solid var(--border); border-radius:4px; padding:12px; font-family:'JetBrains Mono',monospace; font-size:0.78rem; color:#40f0a0; margin-top:12px;">// Filter selectors</div>
+      </div>
+    </div>
+
+    <!-- Attribute Selectors -->
+    <div class="section">
+      <div class="section-title">Attribute Selectors</div>
+      <div class="demo-box">
+        <div class="controls">
+          <button id="a-has">$("[data-type]")</button>
+          <button id="a-eq" class="blue">$("[data-type='info']")</button>
+          <button id="a-start" class="red">$("[data-type^='warn']")</button>
+          <button id="a-end" class="green">$("[data-type$='error']")</button>
+          <button id="a-contains">$("[data-type*='ok']")</button>
+          <button id="a-reset">Reset</button>
+        </div>
+        <div class="attr-demo" id="attr-demo">
+          <span data-type="info">info</span>
+          <span data-type="warning">warning</span>
+          <span data-type="warn-error">warn-error</span>
+          <span data-type="error">error</span>
+          <span data-type="success">success (no type)</span>
+          <span data-type="ok-status">ok-status</span>
+          <span>no attr</span>
+        </div>
+        <div id="a-output" style="background:#000; border:1px solid var(--border); border-radius:4px; padding:12px; font-family:'JetBrains Mono',monospace; font-size:0.78rem; color:#40f0a0; margin-top:12px;">// Attribute selectors</div>
+      </div>
+    </div>
+
+    <!-- Reference Table -->
+    <div class="section">
+      <div class="section-title">Quick Reference</div>
+      <div class="demo-box">
+        <table>
+          <tr><th>Selector</th><th>Description</th></tr>
+          <tr><td>$("p")</td><td>All &lt;p&gt; elements</td></tr>
+          <tr><td>$("#id")</td><td>Element with specific ID</td></tr>
+          <tr><td>$(".cls")</td><td>All elements with class</td></tr>
+          <tr><td>$("a,b")</td><td>All a and b elements</td></tr>
+          <tr><td>$("div p")</td><td>All &lt;p&gt; inside &lt;div&gt;</td></tr>
+          <tr><td>$("ul>li")</td><td>Direct &lt;li&gt; children of &lt;ul&gt;</td></tr>
+          <tr><td>$("h+p")</td><td>First &lt;p&gt; after &lt;h&gt;</td></tr>
+          <tr><td>$("h~p")</td><td>All &lt;p&gt; siblings after &lt;h&gt;</td></tr>
+          <tr><td>$("li:first")</td><td>First &lt;li&gt;</td></tr>
+          <tr><td>$("li:eq(2)")</td><td>3rd &lt;li&gt; (0-indexed)</td></tr>
+          <tr><td>$("li:even")</td><td>Even-indexed &lt;li&gt; elements</td></tr>
+          <tr><td>$("[href]")</td><td>Elements with href attribute</td></tr>
+          <tr><td>$("[type=text]")</td><td>Elements where type equals text</td></tr>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script>
+  $(function(){
+    // ---- Basic ----
+    function resetBasic(){ $("#basic-list li, #basic-para").removeClass("highlighted blue-hl red-hl green-hl"); }
+    $("#sel-element").click(function(){
+      resetBasic();
+      $("#basic-list li").addClass("highlighted");
+      $("#output").text('$("li") → Selected ALL <li> elements (' + $("#basic-list li").length + ')');
+    });
+    $("#sel-id").click(function(){
+      resetBasic();
+      $("#item3").addClass("blue-hl");
+      $("#output").text('$("#item3") → Selected element with id="item3"');
+    });
+    $("#sel-class").click(function(){
+      resetBasic();
+      $(".special").addClass("red-hl");
+      $("#output").text('$(".special") → Selected ' + $(".special").length + ' elements with class="special"');
+    });
+    $("#sel-multi").click(function(){
+      resetBasic();
+      $("#basic-list li").addClass("highlighted");
+      $("#basic-para").addClass("green-hl");
+      $("#output").text('$("li, p") → Selected both <li> and <p> elements');
+    });
+    $("#sel-reset").click(function(){ resetBasic(); $("#output").text("// Reset"); });
+
+    // ---- Hierarchy ----
+    function resetH(){ $("#htree li").removeClass("highlighted blue-hl red-hl green-hl"); }
+    $("#h-desc").click(function(){
+      resetH();
+      $("#htree li").addClass("highlighted");
+      $("#h-output").text('$("div li") → All <li> descendants inside #htree: ' + $("#htree li").length);
+    });
+    $("#h-child").click(function(){
+      resetH();
+      $("#htree > li").addClass("blue-hl");
+      $("#h-output").text('$("ul > li") → Only DIRECT children: ' + $("#htree > li").length);
+    });
+    $("#h-adj").click(function(){
+      resetH();
+      $("#h2 + li").addClass("red-hl");
+      $("#h-output").text('$("#h2 + li") → Immediately ADJACENT sibling after #h2');
+    });
+    $("#h-sib").click(function(){
+      resetH();
+      $("#h2 ~ li").addClass("green-hl");
+      $("#h-output").text('$("#h2 ~ li") → ALL sibling <li> after #h2: ' + $("#h2 ~ li").length);
+    });
+    $("#h-reset").click(function(){ resetH(); $("#h-output").text("// Reset"); });
+
+    // ---- Filter ----
+    function resetF(){ $("#filter-list li").removeClass("highlighted blue-hl red-hl green-hl"); }
+    $("#f-first").click(function(){ resetF(); $("#filter-list li:first").addClass("highlighted"); $("#f-output").text("li:first → First <li>"); });
+    $("#f-last").click(function(){ resetF(); $("#filter-list li:last").addClass("blue-hl"); $("#f-output").text("li:last → Last <li>"); });
+    $("#f-eq").click(function(){ resetF(); $("#filter-list li:eq(2)").addClass("red-hl"); $("#f-output").text("li:eq(2) → Item at index 2 (3rd item)"); });
+    $("#f-even").click(function(){ resetF(); $("#filter-list li:even").addClass("green-hl"); $("#f-output").text("li:even → Items at even indices (0,2,4,6)"); });
+    $("#f-odd").click(function(){ resetF(); $("#filter-list li:odd").addClass("highlighted"); $("#f-output").text("li:odd → Items at odd indices (1,3,5)"); });
+    $("#f-not").click(function(){ resetF(); $("#filter-list li:not(.skip)").addClass("blue-hl"); $("#f-output").text("li:not(.skip) → All <li> without class 'skip'"); });
+    $("#f-reset").click(function(){ resetF(); $("#f-output").text("// Reset"); });
+
+    // ---- Attribute ----
+    function resetA(){ $("#attr-demo span").removeClass("matched"); }
+    $("#a-has").click(function(){ resetA(); $("#attr-demo span[data-type]").addClass("matched"); $("#a-output").text('[data-type] → Has data-type attribute: ' + $("#attr-demo span[data-type]").length); });
+    $("#a-eq").click(function(){ resetA(); $("#attr-demo span[data-type='info']").addClass("matched"); $("#a-output").text("[data-type='info'] → Exact match"); });
+    $("#a-start").click(function(){ resetA(); $("#attr-demo span[data-type^='warn']").addClass("matched"); $("#a-output").text("[data-type^='warn'] → Starts with 'warn'"); });
+    $("#a-end").click(function(){ resetA(); $("#attr-demo span[data-type$='error']").addClass("matched"); $("#a-output").text("[data-type$='error'] → Ends with 'error'"); });
+    $("#a-contains").click(function(){ resetA(); $("#attr-demo span[data-type*='ok']").addClass("matched"); $("#a-output").text("[data-type*='ok'] → Contains 'ok'"); });
+    $("#a-reset").click(function(){ resetA(); $("#a-output").text("// Reset"); });
+  });
+  </script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>jQuery Effects</title>
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+
+<body>
+  <header class="page-title">
+    <h1>Effects & Animations</h1>
+    <p>Demonstrates show/hide, fade, slide, animate, and animation control methods.</p>
+  </header>
+
+  <section class="card">
+    <h2>1) Basic Effects</h2>
+
+    <div class="demo-row">
+      <div id="basicBox" class="box">Basic</div>
+      <div class="controls">
+        <button id="btnShow">show()</button>
+        <button id="btnHide">hide()</button>
+        <button id="btnToggle">toggle()</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>2) Fade Effects</h2>
+
+    <div class="demo-row">
+      <div id="fadeBox" class="box fade-box">Fade</div>
+      <div class="controls">
+        <button id="btnFadeIn">fadeIn()</button>
+        <button id="btnFadeOut">fadeOut()</button>
+        <button id="btnFadeToggle">fadeToggle()</button>
+        <button id="btnFadeTo">fadeTo()</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>3) Slide Effects</h2>
+
+    <div class="demo-row">
+      <div id="slideBox" class="slide-box">
+        Slide Panel
+      </div>
+      <div class="controls">
+        <button id="btnSlideDown">slideDown()</button>
+        <button id="btnSlideUp">slideUp()</button>
+        <button id="btnSlideToggle">slideToggle()</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>4) Custom animate()</h2>
+
+    <div class="demo-row">
+      <div id="animBox" class="box anim-box">Animate</div>
+      <div class="controls">
+        <button id="btnAnimate">animate()</button>
+        <button id="btnStop">stop()</button>
+        <button id="btnFinish">finish()</button>
+        <button id="btnQueue">queue()</button>
+        <button id="btnDequeue">dequeue()</button>
+        <button id="btnClearQueue">clearQueue()</button>
+      </div>
+    </div>
+
+    <p class="note">
+      Queue buttons add multiple animations; stop/finish/clearQueue control them.
+      Use the controls to see how the element behaves.
+    </p>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>

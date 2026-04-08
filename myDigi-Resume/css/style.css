@@ -1,0 +1,12 @@
+/* Custom spacing to ensure sections don't overlap with fixed navbar */
+section { 
+    scroll-margin-top: 80px; 
+}
+
+/* Hover effect for Project Cards */
+.hover-effect { 
+    transition: transform 0.3s ease; 
+}
+.hover-effect:hover { 
+    transform: translateY(-10px); 
+}

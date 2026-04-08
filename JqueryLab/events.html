@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>jQuery Events</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    :root{--bg:#0a0a0f;--surface:#13131a;--border:#1e1e2e;--accent:#f04080;--text:#e0e0f0;--muted:#6060a0;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;}
+    body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(240,64,128,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(240,64,128,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+    nav{display:flex;align-items:center;gap:16px;padding:20px 32px;border-bottom:1px solid var(--border);position:relative;z-index:10;}
+    nav a{font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--muted);text-decoration:none;}
+    nav a:hover{color:var(--accent);}
+    .page-title{font-size:0.7rem;letter-spacing:0.15em;color:var(--accent);font-family:'JetBrains Mono',monospace;}
+    main{max-width:960px;margin:0 auto;padding:40px 24px 80px;position:relative;z-index:1;}
+    h1{font-size:2.5rem;font-weight:800;margin-bottom:8px;}
+    h1 span{color:var(--accent);}
+    .desc{color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:0.85rem;margin-bottom:48px;}
+    .section{margin-bottom:48px;}
+    .section-title{font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--accent);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:12px;}
+    .section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+    .demo-box{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:24px;margin-bottom:16px;}
+    .log-box{background:#000;border:1px solid var(--border);border-radius:4px;padding:12px;font-family:'JetBrains Mono',monospace;font-size:0.75rem;height:140px;overflow-y:auto;margin-top:12px;}
+    .log-entry{padding:2px 0;border-bottom:1px solid rgba(255,255,255,0.03);}
+    .log-entry.mouse{color:#f04080;}
+    .log-entry.key{color:#40c0f0;}
+    .log-entry.form{color:#40f0a0;}
+    .log-entry.on{color:#f0c040;}
+    button{background:rgba(240,64,128,0.1);border:1px solid var(--accent);color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:0.75rem;padding:8px 16px;border-radius:4px;cursor:pointer;transition:all 0.2s;}
+    button:hover{background:var(--accent);color:#fff;}
+    .btn-yellow{border-color:#f0c040!important;color:#f0c040!important;background:rgba(240,192,64,0.1)!important;}
+    .btn-yellow:hover{background:#f0c040!important;color:#000!important;}
+    .btn-blue{border-color:#40c0f0!important;color:#40c0f0!important;background:rgba(64,192,240,0.1)!important;}
+    .btn-blue:hover{background:#40c0f0!important;color:#000!important;}
+    .btn-green{border-color:#40f0a0!important;color:#40f0a0!important;background:rgba(64,240,160,0.1)!important;}
+    .btn-green:hover{background:#40f0a0!important;color:#000!important;}
+    .mouse-zone{width:100%;height:100px;background:rgba(240,64,128,0.08);border:2px dashed rgba(240,64,128,0.3);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--muted);cursor:pointer;transition:all 0.15s;user-select:none;}
+    .mouse-zone:hover{background:rgba(240,64,128,0.15);border-color:var(--accent);}
+    .mouse-zone.active{background:rgba(240,64,128,0.25);border-color:var(--accent);color:var(--accent);}
+    input[type=text],input[type=password]{background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:0.85rem;padding:10px 14px;border-radius:4px;outline:none;width:100%;max-width:360px;transition:border-color 0.2s;}
+    input[type=text]:focus,input[type=password]:focus{border-color:var(--accent);}
+    select{background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:0.85rem;padding:10px 14px;border-radius:4px;outline:none;}
+    form{display:flex;flex-direction:column;gap:12px;max-width:400px;}
+    form label{font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:var(--muted);}
+    .controls{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;}
+    #dynamic-btn{background:rgba(64,240,160,0.1);border:1px solid #40f0a0;color:#40f0a0;font-family:'JetBrains Mono',monospace;font-size:0.85rem;padding:12px 24px;border-radius:4px;cursor:pointer;}
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html">← Home</a>
+    <div style="flex:1"></div>
+    <span class="page-title">03 // EVENTS</span>
+  </nav>
+  <main>
+    <h1>Event <span>Handling</span></h1>
+    <p class="desc">// Mouse · Keyboard · Form · on() · off()</p>
+
+    <!-- Mouse Events -->
+    <div class="section">
+      <div class="section-title">Mouse Events</div>
+      <div class="demo-box">
+        <div class="mouse-zone" id="mouse-zone">Interact with me!</div>
+        <div class="controls" style="margin-top:16px;">
+          <button id="btn-click">click()</button>
+          <button id="btn-dblclick" class="btn-yellow">dblclick()</button>
+          <button id="btn-down" class="btn-blue">mousedown()</button>
+          <button id="btn-up" class="btn-green">mouseup()</button>
+        </div>
+        <div class="log-box" id="mouse-log">
+          <div class="log-entry mouse">// Mouse event log — interact above</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Keyboard Events -->
+    <div class="section">
+      <div class="section-title">Keyboard Events</div>
+      <div class="demo-box">
+        <input type="text" id="key-input" placeholder="Type here to see keyboard events..."/>
+        <div class="log-box" id="key-log" style="margin-top:12px;">
+          <div class="log-entry key">// Keyboard event log — type in the field above</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form Events -->
+    <div class="section">
+      <div class="section-title">Form Events — submit · change · focus · blur</div>
+      <div class="demo-box">
+        <form id="demo-form">
+          <label>Name</label>
+          <input type="text" id="form-name" placeholder="Your name..."/>
+          <label>Favourite Colour</label>
+          <select id="form-color">
+            <option value="">-- Select --</option>
+            <option value="red">Red</option>
+            <option value="blue">Blue</option>
+            <option value="green">Green</option>
+            <option value="yellow">Yellow</option>
+          </select>
+          <label>Password</label>
+          <input type="password" id="form-pass" placeholder="Password..."/>
+          <div style="margin-top:8px;">
+            <button type="submit">Submit Form</button>
+          </div>
+        </form>
+        <div class="log-box" id="form-log" style="margin-top:12px;">
+          <div class="log-entry form">// Form event log</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- on() and off() -->
+    <div class="section">
+      <div class="section-title">on() and off() — Dynamic Event Binding</div>
+      <div class="demo-box">
+        <p style="font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--muted);margin-bottom:16px;">Use on() to attach, off() to detach event handlers dynamically.</p>
+        <button id="dynamic-btn">Dynamic Button</button>
+        <div class="controls" style="margin-top:16px;">
+          <button id="bind-click" class="btn-green">on("click") — Bind</button>
+          <button id="unbind-click" style="border-color:#f04080;color:#f04080;background:rgba(240,64,128,0.1);">off("click") — Unbind</button>
+          <button id="bind-hover" class="btn-yellow">on("mouseenter") — Bind Hover</button>
+          <button id="unbind-hover" style="border-color:#f04080;color:#f04080;background:rgba(240,64,128,0.1);">off("mouseenter") — Unbind Hover</button>
+        </div>
+        <div class="log-box" id="on-log">
+          <div class="log-entry on">// on()/off() event log</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script>
+  $(function(){
+    function addLog(boxId, msg, type){
+      var t = new Date().toLocaleTimeString();
+      $("#"+boxId).prepend('<div class="log-entry '+type+'"><span style="opacity:0.4">'+t+'</span> '+msg+'</div>');
+    }
+
+    // --- Mouse ---
+    var zone = $("#mouse-zone");
+    zone.click(function(){ addLog("mouse-log","click() — Clicked!","mouse"); $(this).addClass("active"); setTimeout(()=>$(this).removeClass("active"),200); });
+    zone.dblclick(function(){ addLog("mouse-log","dblclick() — Double Clicked!","mouse"); });
+    zone.mouseenter(function(){ addLog("mouse-log","mouseenter() — Mouse entered zone","mouse"); });
+    zone.mouseleave(function(){ addLog("mouse-log","mouseleave() — Mouse left zone","mouse"); });
+    zone.hover(
+      function(){ $(this).text("Mouse ENTERED — hover()"); },
+      function(){ $(this).text("Interact with me!"); }
+    );
+    zone.mousedown(function(){ addLog("mouse-log","mousedown() — Mouse button pressed","mouse"); });
+    zone.mouseup(function(){ addLog("mouse-log","mouseup() — Mouse button released","mouse"); });
+
+    // Buttons trigger same
+    $("#btn-click").click(function(){ zone.trigger("click"); });
+    $("#btn-dblclick").click(function(){ zone.trigger("dblclick"); });
+    $("#btn-down").click(function(){ addLog("mouse-log","mousedown() — Triggered via button","mouse"); });
+    $("#btn-up").click(function(){ addLog("mouse-log","mouseup() — Triggered via button","mouse"); });
+
+    // --- Keyboard ---
+    $("#key-input").keydown(function(e){
+      addLog("key-log",'keydown() — key: "'+e.key+'" (code:'+e.keyCode+')',"key");
+    });
+    $("#key-input").keypress(function(e){
+      if(e.key !== "Shift" && e.key !== "Control")
+        addLog("key-log",'keypress() — char: "'+e.key+'"',"key");
+    });
+    $("#key-input").keyup(function(e){
+      addLog("key-log",'keyup() — key: "'+e.key+'" | value now: "'+$(this).val()+'"',"key");
+    });
+
+    // --- Form ---
+    $("#form-name").focus(function(){ addLog("form-log",'focus() — Name field focused',"form"); });
+    $("#form-name").blur(function(){ addLog("form-log",'blur() — Name field blurred | value: "'+$(this).val()+'"',"form"); });
+    $("#form-color").change(function(){ addLog("form-log",'change() — Color changed to: "'+$(this).val()+'"',"form"); });
+    $("#form-pass").focus(function(){ addLog("form-log",'focus() — Password field focused',"form"); });
+    $("#form-pass").blur(function(){ addLog("form-log",'blur() — Password field blurred',"form"); });
+    $("#demo-form").submit(function(e){
+      e.preventDefault();
+      addLog("form-log",'submit() — Form submitted! name="'+$("#form-name").val()+'", color="'+$("#form-color").val()+'"',"form");
+    });
+
+    // --- on() / off() ---
+    function dynClickHandler(){ addLog("on-log",'on("click") — Dynamic button was CLICKED!',"on"); }
+    function dynHoverHandler(){ addLog("on-log",'on("mouseenter") — Hovering dynamic button!',"on"); }
+    $("#bind-click").click(function(){
+      $("#dynamic-btn").on("click", dynClickHandler);
+      addLog("on-log",'on("click") — click event BOUND to dynamic button',"on");
+    });
+    $("#unbind-click").click(function(){
+      $("#dynamic-btn").off("click", dynClickHandler);
+      addLog("on-log",'off("click") — click event UNBOUND from dynamic button',"on");
+    });
+    $("#bind-hover").click(function(){
+      $("#dynamic-btn").on("mouseenter", dynHoverHandler);
+      addLog("on-log",'on("mouseenter") — hover BOUND to dynamic button',"on");
+    });
+    $("#unbind-hover").click(function(){
+      $("#dynamic-btn").off("mouseenter", dynHoverHandler);
+      addLog("on-log",'off("mouseenter") — hover UNBOUND from dynamic button',"on");
+    });
+  });
+  </script>
+</body>
+</html>

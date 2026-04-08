@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>jQuery Traversing</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    :root{--bg:#0a0a0f;--surface:#13131a;--border:#1e1e2e;--accent:#40f0a0;--text:#e0e0f0;--muted:#6060a0;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;}
+    body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(64,240,160,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(64,240,160,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+    nav{display:flex;align-items:center;gap:16px;padding:20px 32px;border-bottom:1px solid var(--border);position:relative;z-index:10;}
+    nav a{font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--muted);text-decoration:none;}
+    nav a:hover{color:var(--accent);}
+    .page-title{font-size:0.7rem;letter-spacing:0.15em;color:var(--accent);font-family:'JetBrains Mono',monospace;}
+    main{max-width:960px;margin:0 auto;padding:40px 24px 80px;position:relative;z-index:1;}
+    h1{font-size:2.5rem;font-weight:800;margin-bottom:8px;}h1 span{color:var(--accent);}
+    .desc{color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:0.85rem;margin-bottom:48px;}
+    .section{margin-bottom:48px;}
+    .section-title{font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--accent);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:12px;}
+    .section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+    .demo-box{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:24px;margin-bottom:16px;}
+    .controls{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;}
+    button{background:rgba(64,240,160,0.1);border:1px solid var(--accent);color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:0.75rem;padding:8px 16px;border-radius:4px;cursor:pointer;transition:all 0.2s;}
+    button:hover{background:var(--accent);color:#000;}
+    button.y{border-color:#f0c040;color:#f0c040;background:rgba(240,192,64,0.1);}button.y:hover{background:#f0c040;color:#000;}
+    button.b{border-color:#40c0f0;color:#40c0f0;background:rgba(64,192,240,0.1);}button.b:hover{background:#40c0f0;color:#000;}
+    button.r{border-color:#f04080;color:#f04080;background:rgba(240,64,128,0.1);}button.r:hover{background:#f04080;color:#fff;}
+    button.p{border-color:#a040f0;color:#a040f0;background:rgba(160,64,240,0.1);}button.p:hover{background:#a040f0;color:#fff;}
+    .output{background:#000;border:1px solid var(--border);border-radius:4px;padding:12px;font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:#40f0a0;min-height:40px;margin-top:12px;}
+    /* DOM tree */
+    .dom-tree{ font-family:'JetBrains Mono',monospace; font-size:0.8rem; }
+    .dom-tree div, .dom-tree ul, .dom-tree li { transition:all 0.3s; }
+    #grandparent{ background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:6px; padding:16px; }
+    #parent1,#parent2{ background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:4px; padding:12px; margin:8px 0; }
+    .child{ background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.1); border-radius:3px; padding:8px; margin:4px 0; }
+    .grandchild{ background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.12); border-radius:2px; padding:6px; margin:3px 0; }
+    .dom-label{ font-size:0.7rem; color:var(--muted); }
+    .hl-green  { background:rgba(64,240,160,0.25)!important; border-color:var(--accent)!important; color:var(--accent)!important; }
+    .hl-yellow { background:rgba(240,192,64,0.25)!important; border-color:#f0c040!important; color:#f0c040!important; }
+    .hl-blue   { background:rgba(64,192,240,0.25)!important; border-color:#40c0f0!important; color:#40c0f0!important; }
+    .hl-red    { background:rgba(240,64,128,0.25)!important; border-color:#f04080!important; color:#f04080!important; }
+    .hl-purple { background:rgba(160,64,240,0.25)!important; border-color:#a040f0!important; color:#a040f0!important; }
+    /* Sibling list */
+    #sib-list{list-style:none;display:flex;flex-direction:column;gap:6px;}
+    #sib-list li{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:8px 14px;font-family:'JetBrains Mono',monospace;font-size:0.8rem;transition:all 0.3s;}
+    /* filter list */
+    #filter-list2{list-style:none;display:flex;flex-direction:column;gap:6px;}
+    #filter-list2 li{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:8px 14px;font-family:'JetBrains Mono',monospace;font-size:0.8rem;transition:all 0.3s;}
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html">← Home</a>
+    <div style="flex:1"></div>
+    <span class="page-title">05 // TRAVERSING</span>
+  </nav>
+  <main>
+    <h1>DOM <span>Traversing</span></h1>
+    <p class="desc">// Parents · Children · Siblings · Filtering</p>
+
+    <!-- DOM Structure -->
+    <div class="section">
+      <div class="section-title">DOM Tree Structure</div>
+      <div class="demo-box">
+        <div class="dom-tree">
+          <div id="grandparent">
+            <span class="dom-label">#grandparent</span>
+            <div id="parent1">
+              <span class="dom-label">#parent1</span>
+              <div class="child" id="child1"><span class="dom-label">.child#child1</span>
+                <div class="grandchild" id="gc1"><span class="dom-label">.grandchild#gc1</span></div>
+                <div class="grandchild" id="gc2"><span class="dom-label">.grandchild#gc2</span></div>
+              </div>
+              <div class="child" id="child2"><span class="dom-label">.child#child2</span></div>
+            </div>
+            <div id="parent2">
+              <span class="dom-label">#parent2</span>
+              <div class="child" id="child3"><span class="dom-label">.child#child3</span>
+                <div class="grandchild" id="gc3"><span class="dom-label">.grandchild#gc3</span></div>
+              </div>
+              <div class="child" id="child4"><span class="dom-label">.child#child4</span></div>
+            </div>
+          </div>
+        </div>
+        <div id="tree-output" class="output">// Click traversal buttons to highlight nodes</div>
+      </div>
+    </div>
+
+    <!-- Parent Traversal -->
+    <div class="section">
+      <div class="section-title">Parent Traversal</div>
+      <div class="demo-box">
+        <div class="controls">
+          <button id="t-parent">parent() of #gc1</button>
+          <button id="t-parents" class="y">parents() of #gc1</button>
+          <button id="t-parentsUntil" class="b">parentsUntil("#grandparent")</button>
+          <button id="t-reset-p" class="r">Reset</button>
+        </div>
+        <div id="parent-output" class="output">// Parent traversal</div>
+      </div>
+    </div>
+
+    <!-- Children Traversal -->
+    <div class="section">
+      <div class="section-title">Children Traversal</div>
+      <div class="demo-box">
+        <div class="controls">
+          <button id="t-children">children() of #parent1</button>
+          <button id="t-find" class="y">find(".grandchild") in #grandparent</button>
+          <button id="t-reset-c" class="r">Reset</button>
+        </div>
+        <div id="children-output" class="output">// Children traversal</div>
+      </div>
+    </div>
+
+    <!-- Sibling Traversal -->
+    <div class="section">
+      <div class="section-title">Sibling Traversal</div>
+      <div class="demo-box">
+        <ul id="sib-list">
+          <li id="sib1">Sibling 1</li>
+          <li id="sib2">Sibling 2</li>
+          <li id="sib3" style="border-color:#f0c040;color:#f0c040;background:rgba(240,192,64,0.1)">★ Sibling 3 (START)</li>
+          <li id="sib4">Sibling 4</li>
+          <li id="sib5">Sibling 5</li>
+          <li id="sib6" style="border-color:#a040f0;color:#a040f0;background:rgba(160,64,240,0.1)">■ Sibling 6 (END)</li>
+          <li id="sib7">Sibling 7</li>
+        </ul>
+        <div class="controls" style="margin-top:16px;">
+          <button id="t-siblings">siblings() of #sib3</button>
+          <button id="t-next" class="y">next() of #sib3</button>
+          <button id="t-nextAll" class="b">nextAll() of #sib3</button>
+          <button id="t-nextUntil" class="p">nextUntil("#sib6")</button>
+          <button id="t-prev" class="r">prev() of #sib3</button>
+          <button id="t-prevAll">prevAll() of #sib3</button>
+          <button id="t-prevUntil" class="y">prevUntil("#sib1")</button>
+          <button id="t-reset-s" class="r">Reset</button>
+        </div>
+        <div id="sib-output" class="output">// Sibling traversal</div>
+      </div>
+    </div>
+
+    <!-- Filtering Methods -->
+    <div class="section">
+      <div class="section-title">Filtering Methods</div>
+      <div class="demo-box">
+        <ul id="filter-list2">
+          <li class="type-a">Item A — type-a</li>
+          <li class="type-b">Item B — type-b</li>
+          <li class="type-a">Item C — type-a</li>
+          <li class="type-b">Item D — type-b</li>
+          <li class="type-a">Item E — type-a</li>
+          <li>Item F — no type</li>
+        </ul>
+        <div class="controls" style="margin-top:16px;">
+          <button id="f-first2">first()</button>
+          <button id="f-last2" class="y">last()</button>
+          <button id="f-eq2" class="b">eq(2)</button>
+          <button id="f-filter2" class="p">filter(".type-a")</button>
+          <button id="f-not2" class="r">not(".type-b")</button>
+          <button id="f-reset2">Reset</button>
+        </div>
+        <div id="filter-output" class="output">// Filtering methods</div>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script>
+  $(function(){
+    function clearHL(){ $(".dom-tree *").removeClass("hl-green hl-yellow hl-blue hl-red hl-purple"); }
+
+    // --- Parent ---
+    $("#t-parent").click(function(){
+      clearHL(); $("#gc1").addClass("hl-green"); $("#gc1").parent().addClass("hl-yellow");
+      $("#parent-output").text("parent() of #gc1 → #child1 (direct parent)");
+    });
+    $("#t-parents").click(function(){
+      clearHL(); $("#gc1").addClass("hl-green"); $("#gc1").parents().addClass("hl-yellow");
+      var ids = $("#gc1").parents().map(function(){ return "#"+this.id||this.tagName; }).get().join(" → ");
+      $("#parent-output").text("parents() of #gc1 → All ancestors: "+ids);
+    });
+    $("#t-parentsUntil").click(function(){
+      clearHL(); $("#gc1").addClass("hl-green"); $("#gc1").parentsUntil("#grandparent").addClass("hl-blue");
+      $("#parent-output").text("parentsUntil('#grandparent') — All ancestors of #gc1 up to (not including) #grandparent");
+    });
+    $("#t-reset-p").click(function(){ clearHL(); $("#parent-output").text("// Reset"); });
+
+    // --- Children ---
+    $("#t-children").click(function(){
+      clearHL(); $("#parent1").addClass("hl-yellow"); $("#parent1").children().addClass("hl-green");
+      $("#children-output").text("children() of #parent1 → Direct children: "+$("#parent1").children().length+" elements");
+    });
+    $("#t-find").click(function(){
+      clearHL(); $("#grandparent").addClass("hl-yellow"); $("#grandparent").find(".grandchild").addClass("hl-blue");
+      $("#children-output").text('find(".grandchild") in #grandparent → Found '+$("#grandparent").find(".grandchild").length+' grandchild elements (all levels)');
+    });
+    $("#t-reset-c").click(function(){ clearHL(); $("#children-output").text("// Reset"); });
+
+    // --- Siblings ---
+    function resetSib(){ $("#sib-list li").removeClass("hl-green hl-yellow hl-blue hl-red hl-purple"); }
+    $("#t-siblings").click(function(){ resetSib(); $("#sib3").siblings().addClass("hl-green"); $("#sib-output").text("siblings() of #sib3 → All siblings ("+$("#sib3").siblings().length+")"); });
+    $("#t-next").click(function(){ resetSib(); $("#sib3").next().addClass("hl-yellow"); $("#sib-output").text("next() of #sib3 → #sib4 (immediately next)"); });
+    $("#t-nextAll").click(function(){ resetSib(); $("#sib3").nextAll().addClass("hl-blue"); $("#sib-output").text("nextAll() of #sib3 → All following siblings: "+$("#sib3").nextAll().length); });
+    $("#t-nextUntil").click(function(){ resetSib(); $("#sib3").nextUntil("#sib6").addClass("hl-purple"); $("#sib-output").text('nextUntil("#sib6") — All siblings from #sib3 until (not including) #sib6'); });
+    $("#t-prev").click(function(){ resetSib(); $("#sib3").prev().addClass("hl-red"); $("#sib-output").text("prev() of #sib3 → #sib2 (immediately previous)"); });
+    $("#t-prevAll").click(function(){ resetSib(); $("#sib3").prevAll().addClass("hl-green"); $("#sib-output").text("prevAll() of #sib3 → All preceding siblings: "+$("#sib3").prevAll().length); });
+    $("#t-prevUntil").click(function(){ resetSib(); $("#sib3").prevUntil("#sib1").addClass("hl-yellow"); $("#sib-output").text('prevUntil("#sib1") — All preceding siblings until (not including) #sib1'); });
+    $("#t-reset-s").click(function(){ resetSib(); $("#sib-output").text("// Reset"); });
+
+    // --- Filtering ---
+    function resetF2(){ $("#filter-list2 li").removeClass("hl-green hl-yellow hl-blue hl-purple hl-red"); }
+    $("#f-first2").click(function(){ resetF2(); $("#filter-list2 li").first().addClass("hl-green"); $("#filter-output").text("first() → First li element"); });
+    $("#f-last2").click(function(){ resetF2(); $("#filter-list2 li").last().addClass("hl-yellow"); $("#filter-output").text("last() → Last li element"); });
+    $("#f-eq2").click(function(){ resetF2(); $("#filter-list2 li").eq(2).addClass("hl-blue"); $("#filter-output").text("eq(2) → li at index 2 (3rd item)"); });
+    $("#f-filter2").click(function(){ resetF2(); $("#filter-list2 li").filter(".type-a").addClass("hl-purple"); $("#filter-output").text('filter(".type-a") → '+$("#filter-list2 li").filter(".type-a").length+' elements with .type-a'); });
+    $("#f-not2").click(function(){ resetF2(); $("#filter-list2 li").not(".type-b").addClass("hl-red"); $("#filter-output").text('not(".type-b") → '+$("#filter-list2 li").not(".type-b").length+' elements that do NOT have .type-b'); });
+    $("#f-reset2").click(function(){ resetF2(); $("#filter-output").text("// Reset"); });
+  });
+  </script>
+</body>
+</html>

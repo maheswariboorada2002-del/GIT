@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>jQuery Style</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    :root{--bg:#0a0a0f;--surface:#13131a;--border:#1e1e2e;--accent:#a040f0;--text:#e0e0f0;--muted:#6060a0;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;}
+    body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(160,64,240,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(160,64,240,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+    nav{display:flex;align-items:center;gap:16px;padding:20px 32px;border-bottom:1px solid var(--border);position:relative;z-index:10;}
+    nav a{font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--muted);text-decoration:none;}
+    nav a:hover{color:var(--accent);}
+    .page-title{font-size:0.7rem;letter-spacing:0.15em;color:var(--accent);font-family:'JetBrains Mono',monospace;}
+    main{max-width:960px;margin:0 auto;padding:40px 24px 80px;position:relative;z-index:1;}
+    h1{font-size:2.5rem;font-weight:800;margin-bottom:8px;}
+    h1 span{color:var(--accent);}
+    .desc{color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:0.85rem;margin-bottom:48px;}
+    .section{margin-bottom:48px;}
+    .section-title{font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--accent);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:12px;}
+    .section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+    .demo-box{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:24px;margin-bottom:16px;}
+    .controls{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;}
+    button{background:rgba(160,64,240,0.1);border:1px solid var(--accent);color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:0.75rem;padding:8px 16px;border-radius:4px;cursor:pointer;transition:all 0.2s;}
+    button:hover{background:var(--accent);color:#fff;}
+    button.y{border-color:#f0c040;color:#f0c040;background:rgba(240,192,64,0.1);}button.y:hover{background:#f0c040;color:#000;}
+    button.b{border-color:#40c0f0;color:#40c0f0;background:rgba(64,192,240,0.1);}button.b:hover{background:#40c0f0;color:#000;}
+    button.r{border-color:#f04080;color:#f04080;background:rgba(240,64,128,0.1);}button.r:hover{background:#f04080;color:#fff;}
+    button.g{border-color:#40f0a0;color:#40f0a0;background:rgba(64,240,160,0.1);}button.g:hover{background:#40f0a0;color:#000;}
+    .output{background:#000;border:1px solid var(--border);border-radius:4px;padding:12px;font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:#40f0a0;min-height:40px;margin-top:12px;}
+    /* Style target */
+    #style-box{width:180px;height:100px;background:#222;border:2px solid #333;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.85rem;transition:all 0.3s;}
+    /* Class demos */
+    .card-item{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:0.8rem;transition:all 0.3s;cursor:pointer;}
+    .card-item.highlighted{background:rgba(160,64,240,0.2);border-color:var(--accent);color:var(--accent);}
+    .card-item.success{background:rgba(64,240,160,0.15);border-color:#40f0a0;color:#40f0a0;}
+    .card-item.warning{background:rgba(240,192,64,0.15);border-color:#f0c040;color:#f0c040;}
+    .card-item.danger{background:rgba(240,64,128,0.15);border-color:#f04080;color:#f04080;}
+    .cards{display:flex;flex-direction:column;gap:8px;}
+    /* Theme demo */
+    #theme-demo{padding:24px;border-radius:8px;transition:all 0.4s;background:#1a1a2e;border:2px solid #2a2a4e;}
+    #theme-demo.light-theme{background:#f5f5f0;color:#222;border-color:#ddd;}
+    #theme-demo.light-theme p{color:#555;}
+    #theme-demo h3{font-size:1.1rem;margin-bottom:8px;}
+    #theme-demo p{font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--muted);}
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html">← Home</a>
+    <div style="flex:1"></div>
+    <span class="page-title">04 // STYLE</span>
+  </nav>
+  <main>
+    <h1>Style <span>Manipulation</span></h1>
+    <p class="desc">// css() · addClass() · removeClass() · toggleClass() · hasClass()</p>
+
+    <!-- css() -->
+    <div class="section">
+      <div class="section-title">css() — Get &amp; Set Inline Styles</div>
+      <div class="demo-box">
+        <div style="display:flex;gap:24px;align-items:center;flex-wrap:wrap;">
+          <div id="style-box">Style Me!</div>
+          <div>
+            <div class="controls">
+              <button id="css-bg">css("background","#f04080")</button>
+              <button id="css-color" class="y">css("color","#f0c040")</button>
+              <button id="css-size" class="b">css("font-size","1.2rem")</button>
+              <button id="css-radius" class="g">css("border-radius","50%")</button>
+              <button id="css-multi">css({...}) Multiple</button>
+              <button id="css-get" class="r">Get background</button>
+              <button id="css-reset">Reset</button>
+            </div>
+          </div>
+        </div>
+        <div id="css-output" class="output">// css() demo</div>
+      </div>
+    </div>
+
+    <!-- addClass / removeClass -->
+    <div class="section">
+      <div class="section-title">addClass() &amp; removeClass()</div>
+      <div class="demo-box">
+        <div class="cards" id="class-cards">
+          <div class="card-item" id="cc1">Card 1 — Click to add .highlighted</div>
+          <div class="card-item" id="cc2">Card 2 — Click to add .success</div>
+          <div class="card-item" id="cc3">Card 3 — Click to add .warning</div>
+          <div class="card-item" id="cc4">Card 4 — Click to add .danger</div>
+        </div>
+        <div class="controls" style="margin-top:16px;">
+          <button id="add-all">addClass all</button>
+          <button id="remove-all" class="r">removeClass all</button>
+        </div>
+        <div id="cls-output" class="output">// addClass() / removeClass() demo</div>
+      </div>
+    </div>
+
+    <!-- toggleClass -->
+    <div class="section">
+      <div class="section-title">toggleClass() &amp; hasClass()</div>
+      <div class="demo-box">
+        <div id="theme-demo">
+          <h3>Theme Demo Box</h3>
+          <p>This box toggles between dark and light themes using toggleClass()</p>
+        </div>
+        <div class="controls" style="margin-top:16px;">
+          <button id="toggle-theme">toggleClass("light-theme")</button>
+          <button id="has-class" class="y">hasClass("light-theme")?</button>
+          <button id="toggle-highlight" class="b">toggleClass("highlighted") on Cards</button>
+        </div>
+        <div id="toggle-output" class="output">// toggleClass() / hasClass() demo</div>
+      </div>
+    </div>
+
+    <!-- Combined showcase -->
+    <div class="section">
+      <div class="section-title">Combined Style Showcase</div>
+      <div class="demo-box">
+        <p style="font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--muted);margin-bottom:16px;">All style methods working together:</p>
+        <div style="display:flex;flex-wrap:wrap;gap:12px;">
+          <div id="showcase-box" style="width:160px;height:80px;background:#222;border:2px solid #333;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.75rem;transition:all 0.3s;cursor:pointer;">Click me!</div>
+        </div>
+        <div class="controls" style="margin-top:16px;">
+          <button id="show-rainbow">Rainbow Effect</button>
+          <button id="show-grow" class="y">Grow</button>
+          <button id="show-shrink" class="r">Shrink</button>
+          <button id="show-reset" class="g">Reset</button>
+        </div>
+        <div id="showcase-output" class="output">// Showcase</div>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script>
+  $(function(){
+    // --- css() ---
+    $("#css-bg").click(function(){ $("#style-box").css("background","#f04080"); $("#css-output").text('css("background","#f04080") — background set!'); });
+    $("#css-color").click(function(){ $("#style-box").css("color","#f0c040"); $("#css-output").text('css("color","#f0c040") — color set!'); });
+    $("#css-size").click(function(){ $("#style-box").css("font-size","1.2rem"); $("#css-output").text('css("font-size","1.2rem") — font-size set!'); });
+    $("#css-radius").click(function(){ $("#style-box").css({"border-radius":"50%","width":"100px","height":"100px"}); $("#css-output").text('css("border-radius","50%") — shape changed!'); });
+    $("#css-multi").click(function(){ $("#style-box").css({"background":"linear-gradient(135deg,#a040f0,#40c0f0)","color":"#fff","font-size":"0.75rem","border-color":"transparent"}); $("#css-output").text('css({...}) — Multiple properties set at once!'); });
+    $("#css-get").click(function(){ var bg = $("#style-box").css("background"); $("#css-output").text('css("background") = "'+bg+'"'); });
+    $("#css-reset").click(function(){ $("#style-box").removeAttr("style"); $("#css-output").text("Styles reset!"); });
+
+    // --- addClass/removeClass ---
+    $("#cc1").click(function(){ $(this).toggleClass("highlighted"); $("#cls-output").text('toggleClass("highlighted") on #cc1'); });
+    $("#cc2").click(function(){ $(this).toggleClass("success"); $("#cls-output").text('toggleClass("success") on #cc2'); });
+    $("#cc3").click(function(){ $(this).toggleClass("warning"); $("#cls-output").text('toggleClass("warning") on #cc3'); });
+    $("#cc4").click(function(){ $(this).toggleClass("danger"); $("#cls-output").text('toggleClass("danger") on #cc4'); });
+    $("#add-all").click(function(){
+      $("#cc1").addClass("highlighted"); $("#cc2").addClass("success"); $("#cc3").addClass("warning"); $("#cc4").addClass("danger");
+      $("#cls-output").text("addClass() — All classes added!");
+    });
+    $("#remove-all").click(function(){
+      $(".card-item").removeClass("highlighted success warning danger");
+      $("#cls-output").text("removeClass() — All classes removed!");
+    });
+
+    // --- toggleClass / hasClass ---
+    $("#toggle-theme").click(function(){ $("#theme-demo").toggleClass("light-theme"); $("#toggle-output").text('toggleClass("light-theme") — Theme toggled!'); });
+    $("#has-class").click(function(){
+      var has = $("#theme-demo").hasClass("light-theme");
+      $("#toggle-output").text('hasClass("light-theme") = ' + has + (has ? " — Currently LIGHT theme" : " — Currently DARK theme"));
+    });
+    $("#toggle-highlight").click(function(){ $(".card-item").toggleClass("highlighted"); $("#toggle-output").text("toggleClass('highlighted') applied to all cards"); });
+
+    // --- Showcase ---
+    var colors = ["#f04080","#f0c040","#40f0a0","#40c0f0","#a040f0"];
+    var ci = 0;
+    $("#showcase-box").click(function(){
+      $(this).css("background", colors[ci % colors.length]);
+      ci++;
+      $("#showcase-output").text("css() click — color: "+colors[(ci-1)%colors.length]);
+    });
+    $("#show-rainbow").click(function(){
+      var b = $("#showcase-box");
+      b.css({"background":"linear-gradient(135deg,#f04080,#f0c040,#40f0a0,#40c0f0)","color":"#fff"});
+      $("#showcase-output").text("Rainbow gradient applied with css()!");
+    });
+    $("#show-grow").click(function(){ $("#showcase-box").css({width:"220px",height:"110px","font-size":"1rem"}); $("#showcase-output").text('css({width,height}) — Box grew!'); });
+    $("#show-shrink").click(function(){ $("#showcase-box").css({width:"80px",height:"50px","font-size":"0.6rem"}); $("#showcase-output").text('css({width,height}) — Box shrank!'); });
+    $("#show-reset").click(function(){ $("#showcase-box").removeAttr("style").css({width:"160px",height:"80px",background:"#222",border:"2px solid #333",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'JetBrains Mono',monospace",fontSize:"0.75rem",transition:"all 0.3s",cursor:"pointer",color:"var(--text)"}); $("#showcase-output").text("Reset!"); });
+  });
+  </script>
+</body>
+</html>
