@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Student Support - Maheswari</title>
+
+  <style>
+    
+    body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(-45deg, #1e3c72, #00c6ff, #6a11cb, #2a5298);
+        background-size: 400% 400%;
+        animation: gradientMove 10s ease infinite;
+    }
+
+    @keyframes gradientMove {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    .card {
+        width: 370px;
+        padding: 50px 30px 30px;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 25px;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 25px 60px rgba(0,0,0,0.6);
+        text-align: center;
+        position: relative;
+        color: white;
+        animation: floatCard 4s ease-in-out infinite;
+    }
+
+    @keyframes floatCard {
+        0%,100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+    }
+
+    
+    .avatar {
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, #00f2fe, #8e2de2);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 45px;
+        color: white;
+        position: absolute;
+        top: -55px;
+        left: 50%;
+        transform: translateX(-50%);
+        box-shadow: 0 0 25px #00f2fe, 0 0 50px #8e2de2;
+        animation: glowPulse 2s infinite alternate;
+    }
+
+    @keyframes glowPulse {
+        from { box-shadow: 0 0 20px #00f2fe; }
+        to { box-shadow: 0 0 50px #8e2de2; }
+    }
+
+    h2 {
+        margin-top: 70px;
+        margin-bottom: 20px;
+    }
+
+    input {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 15px;
+        border: none;
+        outline: none;
+        background: rgba(255,255,255,0.15);
+        color: white;
+        font-size: 14px;
+    }
+
+    input::placeholder {
+        color: #e0e0e0;
+    }
+
+    button {
+        width: 100%;
+        padding: 14px;
+        margin-top: 12px;
+        border-radius: 35px;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 15px;
+        transition: 0.3s ease;
+    }
+
+    .manual-btn {
+        background: linear-gradient(45deg, #00c6ff, #0072ff);
+        color: white;
+    }
+
+    .manual-btn:hover {
+        transform: scale(1.08);
+        box-shadow: 0 0 20px #00c6ff;
+    }
+
+    .google-btn {
+        background: linear-gradient(45deg, #8e2de2, #4a00e0);
+        color: white;
+    }
+
+    .google-btn:hover {
+        transform: scale(1.08);
+        box-shadow: 0 0 20px #8e2de2;
+    }
+
+    .divider {
+        margin: 20px 0;
+        font-size: 13px;
+        color: #ddd;
+    }
+
+  </style>
+</head>
+
+<body>
+
+<div class="card">
+
+  
+  <div class="avatar">
+    
+  </div>
+
+  <h2>Student Login</h2>
+
+  <input type="text" id="username" placeholder="Username">
+  <input type="email" id="email" placeholder="Email">
+
+  <button class="manual-btn" onclick="manualLogin()">Login</button>
+
+  <div class="divider">OR</div>
+
+  <button class="google-btn" onclick="loginWithGoogle()">Sign in with Google</button>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider } 
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyD4WMkiOWE6CqEdHTJV5FpmapsFjmyL53k",
+    authDomain: "my-project-3117-8666d.firebaseapp.com",
+    projectId: "my-project-3117-8666d",
+    appId: "1:531192392029:web:0064d8417e0acf6f74e0b4"
+    
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth();
+const provider = new GoogleAuthProvider();
+
+window.manualLogin = function() {
+  const username = document.getElementById("username").value;
+  const email = document.getElementById("email").value;
+
+  if(username === "" || email === ""){
+    alert("Please enter username and email");
+    return;
+  }
+
+  fetch("backend.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      name: username,
+      email: email,
+      type: "manual"
+    })
+  })
+  .then(response => response.text())
+  .then(data => {
+    document.body.innerHTML = data;
+  });
+}
+
+window.loginWithGoogle = function() {
+  signInWithPopup(auth, provider)
+  .then(async (result) => {
+      const idToken = await result.user.getIdToken();
+
+      fetch("backend.php", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            token: idToken,
+            type: "google"
+          })
+      })
+      .then(response => response.text())
+      .then(data => {
+          document.body.innerHTML = data;
+      });
+
+  })
+  .catch((error) => {
+      alert(error.message);
+  });
+}
+
+</script>
+
+</body>
+</html>
